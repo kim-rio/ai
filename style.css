@@ -142,12 +142,16 @@ footer{
   text-align: center;
 }
 
+.footer{
+  opacity: 0.4;
+  margin-bottom: 1px;
+}
 
 .bottom-input {
   padding-left: 0;
   position: fixed;
   gap: 2px;
-  bottom: 40px;
+  bottom: 30px;
   text-align: center;
   width: 60%;
   left: 20%;
@@ -198,7 +202,7 @@ footer{
 }
 
 .yoo{
-  text-align: center;margin-top:200px;position: fixed; left: 0;right: 0;opacity: 0.3;
+  text-align: center;margin-top:200px;position: fixed; left: 0;right: 0;opacity: 0.4;
 }
 
 textarea::placeholder{
