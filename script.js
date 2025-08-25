@@ -38,3 +38,14 @@ textarea.addEventListener("input", () => {
   textarea.style.height = "auto"; // reset
   textarea.style.height = Math.min(textarea.scrollHeight, window.innerHeight/2) + "px"; 
 });
+// send effect
+
+function sendMessage() {
+      let text = document.getElementById("messageInput").value;
+      if (text.trim() !== "") {
+        // encode text so spaces/symbols don’t break the URL
+        let encoded = encodeURIComponent(text);
+        // open new page with the message
+        window.location.href = "newpage.html?msg=" + encoded;
+    }
+}
