@@ -33,6 +33,7 @@
   padding: 11px 6px;
   box-shadow: 0 3px 6px 0 var(--shadow-g);
   cursor: pointer;
+  justify-content: center;
 }
 
 .name-sidebar{
