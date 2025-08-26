@@ -19,7 +19,7 @@
   });
 
 
-  const input = document.getElementById("messageInput");
+const input = document.getElementById("messageInput");
 const button = document.getElementById("sendBtn");
 
 button.addEventListener("click", sendMessage);
@@ -49,3 +49,12 @@ function sendMessage() {
         window.location.href = "newpage.html?msg=" + encoded;
     }
 }
+
+// sidebar sliding
+const hamburger = document.getElementById('hamburger');
+    const sidebar = document.getElementById('sidebar');
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      sidebar.classList.toggle('active');
+    });

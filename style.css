@@ -1,10 +1,11 @@
 :root{
-  --black:#333;
+  --black:black;
   --shadow-g:#525352;
   --shadow-p:#be55ef;
-  --green:#1bc131;
+  --green:#7cf0df;
   --purple:#753ba7;
-  --white:#ffffff;
+  --white-g:#ffffff;
+  --white:#f4f4ec;
 }
 
 
@@ -26,7 +27,16 @@
 
 /* -----name of the web----- */
 .name{
-  font-size: medium;
+  font-size: 30px;
+  margin: 10px;
+  border-radius: 10px;
+  padding: 11px 6px;
+  box-shadow: 0 3px 6px 0 var(--shadow-g);
+  cursor: pointer;
+}
+
+.name-sidebar{
+  font-size: 30px;
   margin: 10px;
   border-radius: 10px;
   padding: 11px 6px;
@@ -181,7 +191,7 @@ footer{
 
 #plusBtn{
   border-radius: 50%;
-  font-size: 18px;
+  font-size: 25px;
   border:none;
   color: var(--purple);
   background-color: inherit;
@@ -195,13 +205,13 @@ footer{
   border: none;
   color: var(--purple);
   border-radius: 50%;
-  font-size: 18px;
+  font-size: 25px;
   cursor: pointer;
   transition: background 0.3s;
   background-color: inherit;
 }
 
-.yoo{
+.yoo{font-size: 30px;
   text-align: center;margin-top:200px;position: fixed; left: 0;right: 0;opacity: 0.4;
 }
 
@@ -210,5 +220,99 @@ textarea::placeholder{
 }
 
 body.dark-mode textarea::placeholder {
+  color: var(--green);
+}
+
+
+/* side bar sliding */
+
+
+    /* Sidebar styling */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px; /* hidden by default */
+      width: 250px;
+      height: 100%;
+      padding-top: 60px;
+      transition: left 0.3s ease;
+    }
+    .sidebar a {
+      display: block;
+      padding: 15px;
+      text-decoration: none;
+      color: white;
+    }
+    .sidebar a:hover {
+      background-color: #575757;
+    }
+
+    /* Active state (visible sidebar) */
+    .sidebar.active {
+      left: 0;
+    }
+
+    /* Hamburger button */
+    .hamburger {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+    .hamburger div {
+      width: 30px;
+      height: 4px;
+      background-color: #333;
+      margin: 6px 0;
+      transition: 0.4s;
+    }
+
+    /* Optional animation to turn into X */
+    .hamburger.active div:nth-child(1) {
+      transform: rotate(-45deg) translate(-6px, 6px);
+    }
+    .hamburger.active div:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.active div:nth-child(3) {
+      transform: rotate(45deg) translate(-6px, -6px);
+    }
+
+    /* Page content */
+    .content {
+      padding: 20px;
+    }
+
+
+  /* -----history------ */
+  .history{
+    margin-left:20px;font-size: 20px;
+  }
+
+/* ---white and dark view in history---- */
+  body .history {
+  color: var(--purple);
+}  
+
+ body.dark-mode .history {
+  color: var(--green);
+}  
+
+  /* ---white view---- */
+  body .sidebar {
+  color: var(--green);
+  background-color: var(--white-g);
+}
+  body.dark-mode .sidebar {
+  color: var(--green);
+  background-color: #222;
+}
+
+/* ----name sidebar theme---- */
+body .name-sidebar {
+  color: var(--purple);
+}
+body.dark-mode .name-sidebar {
   color: var(--green);
 }
