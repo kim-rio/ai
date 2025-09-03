@@ -1,73 +1,1014 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sw">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <meta property="og:title" content="chatAI.UI">
-    <meta property="og:discription" content="a sample of a chatbot UI">
-    <title>@Panky</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Mswahili Chatbot">
+    <meta property="og:description" content="Akili ya kisasa kwa lugha ya Kiswahili">
+    <title>Mswahili - Chatbot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --black: #000;
+            --dark-bg: #1a1a1a;
+            --shadow-g: #525352;
+            --shadow-p: #be55ef;
+            --green: #7cf0df;
+            --purple: #753ba7;
+            --white-g: #ffffff;
+            --white: #f4f4ec;
+            --light-gray: #f0f0f0;
+            --dark-gray: #333;
+            --chat-user-bg: #e1f5fe;
+            --chat-bot-bg: #f3e5f5;
+            --dark-chat-user-bg: #2a3a40;
+            --dark-chat-bot-bg: #3a2a40;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--white);
+            color: var(--purple);
+            transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Dark Theme */
+        body.dark-mode {
+            background-color: var(--dark-bg);
+            color: var(--green);
+        }
+
+        /* Header Styles */
+        header {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: var(--white);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background 0.3s ease-in-out;
+        }
+
+        body.dark-mode header {
+            background-color: var(--black);
+            box-shadow: 0 2px 5px rgba(255, 255, 255, 0.05);
+        }
+
+        .hamburger {
+            width: 30px;
+            height: 22px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            display: block;
+            height: 3px;
+            background: var(--purple);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .hamburger span {
+            background: var(--green);
+        }
+
+        .spacer {
+            flex: 1;
+        }
+
+        .name {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 0 15px;
+            text-align: center;
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--green);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            overflow: hidden;
+        }
+
+        .welcome-message {
+            text-align: center;
+            margin: 30px 0;
+            font-size: 24px;
+            opacity: 0.7;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 70px;
+        }
+
+        /* Custom thin scrollbar for chat messages */
+        .chat-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 2px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 15px;
+            border-radius: 18px;
+            margin: 5px 0;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: var(--chat-user-bg);
+            color: var(--dark-gray);
+            border-bottom-right-radius: 5px;
+        }
+
+        body.dark-mode .user-message {
+            background-color: var(--dark-chat-user-bg);
+            color: var(--green);
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: var(--chat-bot-bg);
+            color: var(--dark-gray);
+            border-bottom-left-radius: 5px;
+        }
+
+        body.dark-mode .bot-message {
+            background-color: var(--dark-chat-bot-bg);
+            color: var(--green);
+        }
+
+        .message-time {
+            font-size: 11px;
+            text-align: right;
+            margin-top: 5px;
+            opacity: 0.7;
+        }
+
+        /* Input Area */
+        .bottom-input {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px;
+            background-color: var(--white);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 90;
+            transition: background 0.3s ease-in-out;
+        }
+
+        body.dark-mode .bottom-input {
+            background-color: var(--black);
+            box-shadow: 0 -2px 10px rgba(255, 255, 255, 0.05);
+        }
+
+        #messageInput {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 24px;
+            border: 1px solid #ddd;
+            outline: none;
+            font-size: 16px;
+            resize: none;
+            max-height: 120px;
+            overflow-y: auto;
+            background-color: var(--white);
+            color: var(--purple);
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Custom thin scrollbar for textarea */
+        #messageInput::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #messageInput::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        #messageInput::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 2px;
+        }
+
+        #messageInput::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        body.dark-mode #messageInput {
+            background-color: var(--dark-gray);
+            color: var(--green);
+            border-color: #444;
+        }
+
+        #messageInput::placeholder {
+            color: #999;
+        }
+
+        body.dark-mode #messageInput::placeholder {
+            color: #777;
+        }
+
+        #plusBtn, #sendBtn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            background-color: var(--purple);
+            color: white;
+            transition: background 0.3s ease;
+        }
+
+        body.dark-mode #plusBtn, 
+        body.dark-mode #sendBtn {
+            background-color: var(--green);
+            color: var(--black);
+        }
+
+        #plusBtn:hover, #sendBtn:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100%;
+            background-color: var(--white);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Custom thin scrollbar for sidebar */
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 2px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        body.dark-mode .sidebar {
+            background-color: var(--dark-gray);
+            box-shadow: 2px 0 10px rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        body.dark-mode .sidebar-header {
+            border-bottom-color: #444;
+        }
+
+        .close-sidebar {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--purple);
+        }
+
+        body.dark-mode .close-sidebar {
+            color: var(--green);
+        }
+
+        .name-sidebar {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .history-title {
+            margin: 20px 0 10px;
+            font-size: 18px;
+            color: var(--purple);
+        }
+
+        body.dark-mode .history-title {
+            color: var(--green);
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .history-item {
+            padding: 10px 15px;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 200px;
+        }
+
+        .history-time {
+            font-size: 10px;
+            opacity: 0.7;
+        }
+
+        body.dark-mode .history-item {
+            background-color: #444;
+        }
+
+        .history-item:hover {
+            background-color: #ddd;
+        }
+
+        body.dark-mode .history-item:hover {
+            background-color: #555;
+        }
+
+        .clear-history {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .clear-history:hover {
+            background-color: #ee5253;
+        }
+
+        /* Footer */
+        footer {
+            padding: 10px;
+            text-align: center;
+            background-color: var(--white);
+            transition: background 0.3s ease-in-out;
+        }
+
+        body.dark-mode footer {
+            background-color: var(--black);
+        }
+
+        .footer {
+            opacity: 0.6;
+            font-size: 12px;
+        }
+
+        /* Overlay for sidebar */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Typing indicator */
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background-color: var(--chat-bot-bg);
+            color: var(--dark-gray);
+            border-radius: 18px;
+            padding: 12px 15px;
+            margin: 5px 0;
+            border-bottom-left-radius: 5px;
+        }
+
+        body.dark-mode .typing-indicator {
+            background-color: var(--dark-chat-bot-bg);
+            color: var(--green);
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: currentColor;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .message {
+                max-width: 90%;
+            }
+            
+            .sidebar {
+                width: 80%;
+                left: -80%;
+            }
+            
+            .name {
+                font-size: 18px;
+            }
+            
+            .history-text {
+                max-width: 150px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Overlay for sidebar -->
+    <div class="overlay" id="overlay"></div>
+
     <header>
-        <!-- humbuger icon -->
-        <div class="header"><div class="hamburger">
+        <div class="hamburger" id="hamburger">
             <span></span>
             <span></span>
             <span></span>
         </div>
-        <!-- space inbetween -->
+        
         <div class="spacer"></div>
 
-        <!-- name of the bot -->
         <h1 class="name">Mswahili</h1>
-        <!-- space inbetween -->
+        
         <div class="spacer"></div>
 
-        <!-- theme icon -->
         <label class="switch">
-          <input type="checkbox" id="themeToggle">
-          <span class="slider"></span>
+            <input type="checkbox" id="themeToggle">
+            <span class="slider"></span>
         </label>
     </header>
+
     <main>
-        <p class="yoo">karibu</p>
-
-        <!-- input data from the user -->
-        
-
-     <div class="bottom-input">
-         <textarea id="messageInput" placeholder="Andika ujumbe..."></textarea>
-
-        <div class="arrow">
-          <button id="plusBtn">+</button>
-          <div class="spacer"></div>
-          <button id="sendBtn">&#10148;</button>
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+                <div class="welcome-message">
+                    <p>Karibu! Ninaweza kukusaidia na maswali yoyote kwa Kiswahili.</p>
+                </div>
+                <!-- Messages will be added here dynamically -->
+            </div>
+            
+            <!-- Typing indicator -->
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
         </div>
-       </div>
 
-       <!-- ----------------------------- -->
-
-       <!-- Hamburger Icon -->
-  <div class="hamburger" id="hamburger">
-    <div></div>
-    <div></div>
-    <div></div>
-  </div>
-
-  <!-- Sidebar -->
-  <div class="sidebar" id="sidebar">
-    <a href="index.html" class="name-sidebar">Mswahili</a>
-    <p class="history">Historia</p>
-  </div>
-
-  
-<!-- -------------------------------- -->
-
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2 class="name-sidebar">Mswahili</h2>
+                <button class="close-sidebar" id="closeSidebar">&times;</button>
+            </div>
+            
+            <p class="history-title">Historia ya Mazungumzo</p>
+            <div class="history-list" id="historyList">
+                <!-- Chat history will be added here -->
+            </div>
+            
+            <button class="clear-history" id="clearHistory">Futa Historia</button>
+        </div>
     </main>
-    <footer> 
-        <p class="footer">&copy; MswahiliTeam §-mswahili sio mkamilifu</p>
+
+    <div class="bottom-input">
+        <button id="plusBtn"><i class="fas fa-plus"></i></button>
+        <textarea id="messageInput" placeholder="Andika ujumbe wako hapa..."></textarea>
+        <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+    </div>
+
+    <footer>
+        <p class="footer">&copy; MswahiliTeam - Mswahili sio mkamilifu</p>
     </footer>
+
+    <script>
+        // DOM Elements
+        const themeToggle = document.getElementById("themeToggle");
+        const messageInput = document.getElementById("messageInput");
+        const sendBtn = document.getElementById("sendBtn");
+        const plusBtn = document.getElementById("plusBtn");
+        const chatMessages = document.getElementById("chatMessages");
+        const hamburger = document.getElementById("hamburger");
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("overlay");
+        const closeSidebar = document.getElementById("closeSidebar");
+        const clearHistory = document.getElementById("clearHistory");
+        const typingIndicator = document.getElementById("typingIndicator");
+        const historyList = document.getElementById("historyList");
+
+        // In-memory storage for chat history
+        let chatHistory = JSON.parse(localStorage.getItem('mswahili_chat_history')) || [];
+        let currentUser = localStorage.getItem('mswahili_user_id') || 'user_' + Math.floor(Math.random() * 10000);
+        
+        // Save user ID if not already saved
+        if (!localStorage.getItem('mswahili_user_id')) {
+            localStorage.setItem('mswahili_user_id', currentUser);
+        }
+
+        // Swahili slang and street language dictionary
+        const SWAHILI_SLANG = {
+            "mzeee": "mzee",
+            "msee": "mtu",
+            "vipi": "habari",
+            "poa": "nzuri",
+            "safi": "nzuri",
+            "baze": "rafiki",
+            "dame": "msichana",
+            "kale": "kile",
+            "mbogi": "kikundi",
+            "mboch": "msichana",
+            "noma": "ngumu",
+            "kibarua": "kazi ya muda",
+            "kitu": "kitu",
+            "mburunge": "mahali pa kulala",
+            "doshi": "shilingi elfu mbili",
+            "ngiri": "shilingi elfu",
+            "soo": "sawa",
+            "kaizi": "kaka",
+            "mresh": "mpya",
+            "kuthesa": "kuchoka",
+            "kudai": "kuomba",
+            "kula pesa": "kutumia pesa",
+            "kula": "kula",
+            "kupiga debe": "kutangaza",
+            "kupiga chuku": "kula",
+            "kupiga mzinga": "kulala",
+            "kupiga story": "kuongea",
+            "kupiga teke": "kusubiri",
+            "kupiga porojo": "kuongea upuuzi"
+        };
+
+        // Standardize Swahili text by replacing slang with formal equivalents
+        function standardizeSwahili(text) {
+            const words = text.split(' ');
+            const standardizedWords = [];
+            
+            for (const word of words) {
+                // Remove any punctuation for better matching
+                const cleanWord = word.replace(/[^\w\s]|_/g, "").toLowerCase();
+                
+                if (SWAHILI_SLANG[cleanWord]) {
+                    // Preserve original capitalization if any
+                    if (word[0] === word[0].toUpperCase()) {
+                        standardizedWords.push(SWAHILI_SLANG[cleanWord].charAt(0).toUpperCase() + SWAHILI_SLANG[cleanWord].slice(1));
+                    } else {
+                        standardizedWords.push(SWAHILI_SLANG[cleanWord]);
+                    }
+                } else {
+                    standardizedWords.push(word);
+                }
+            }
+            
+            return standardizedWords.join(' ');
+        }
+
+        // Simulated backend API call
+        function callSwahiliAI(message) {
+            return new Promise((resolve) => {
+                // Standardize the message to handle Swahili slang
+                const standardizedMessage = standardizeSwahili(message);
+                
+                // Simulate API delay
+                setTimeout(() => {
+                    // Check for specific patterns in the message
+                    const messageLower = standardizedMessage.toLowerCase();
+                    
+                    if (/(habari|hujambo|mambo|vipi|hello|hi)/.test(messageLower)) {
+                        resolve("Habari! Ninafurahi kuongea nawe. Unaweza kuuliza swali lolote kuhusu neno lolote la Kiswahili.");
+                    } else if (/(unaitwaje|jina lako nani|what is your name)/.test(messageLower)) {
+                        resolve("Jina langu ni Mswahili. Ni msaidizi wako wa kidijitali anayekujua Kiswahili vizuri.");
+                    } else if (/(unaweza kufanya nini|what can you do|help|msaada)/.test(messageLower)) {
+                        resolve("Naweza kukujibu maswali, kukufundisha Kiswahili, kukupa visawe, na kukusaidia kwa lugha ya Kiswahili. Unauliza nini?");
+                    } else if (/(asante|thanks|thank you|shukrani|ahsante)/.test(messageLower)) {
+                        resolve("Karibu sana! Nimefurahi kukusaidia. Kuna jambo lingine unaweza kuuliza?");
+                    } else if (/(bye|kwaheri|baadaye|see you|tutaonana)/.test(messageLower)) {
+                        resolve("Kwaheri! Kuwa na siku njema. Karibu tena unapohitaji msaada wa Kiswahili.");
+                    } else if (/(wapi|mahali|location|place|eneo)/.test(messageLower)) {
+                        resolve("Mimi ni msaidizi wa kidijitali, hivyo sina eneo maalum. Lakini naweza kukusaidia kutoka popote ulipo.");
+                    } else if (/(wapi|where|location).*(nairobi|kenya|tanzania|africa|afrika)/.test(messageLower)) {
+                        resolve("Nairobi ni mji mkuu wa Kenya. Tanzania iko kusini mwa Kenya. Afrika ni bara kubwa na lenye utajiri mkubwa wa tamaduni na lugha mbalimbali.");
+                    } else if (/(una umri ngapi|how old are you|umri|miaka)/.test(messageLower)) {
+                        resolve("Mimi ni programu ya kompyuta, hivyo sina umri kama binadamu. Niliundwa kuwasaidia watu kujifunza na kutumia Kiswahili.");
+                    } else if (/(hewa|weather|hali ya hewa|mvua|jua)/.test(messageLower)) {
+                        resolve("Samahani, sina upatikanaji wa data ya hali ya hewa kwa sasa. Lakini naweza kukufundisha maneno ya Kiswahili yanayohusiana na hali ya hewa.");
+                    } else if (/(bei|price|cost|pesa|gharama)/.test(messageLower)) {
+                        resolve("Samahani, sina orodha ya bei za bidhaa au huduma kwa sasa. Lakini naweza kukupa visawe vya maneno ya kifedha kwa Kiswahili.");
+                    } else if (/(saa|time|muda|nafasi|saa ngapi)/.test(messageLower)) {
+                        const currentTime = new Date().toLocaleTimeString('sw-KE', { hour: '2-digit', minute: '2-digit' });
+                        resolve(`Saa ya sasa ni ${currentTime}. Je, una swali lingine la Kiswahili?`);
+                    } else if (/(fasihi|shairi|tashbihi|tamthilia|riwaya)/.test(messageLower)) {
+                        resolve("Nina ujuzi wa fasihi ya Kiswahili. Naweza kukusaidia kuhusu mashairi, tamthilia, riwaya na visawe vya maneno.");
+                    } else if (/(sarufi|grammar|wakati|matumizi|usahihi)/.test(messageLower)) {
+                        resolve("Ninaweza kukufundisha sarufi ya Kiswahili kwa undani, kama vile matumizi ya wakati, vitenzi, na usahihi wa lugha.");
+                    } else if (/(kamusi|dictionary|maana|ufafanuzi|tafsiri)/.test(messageLower)) {
+                        resolve("Ninaweza kukupa maana za maneno, visawe, na kufafanua istilahi mbalimbali za Kiswahili.");
+                    } else if (/(we n kichogo)/.test(messageLower)) {
+                        resolve("we jau");
+                    } else {
+                        // For other messages, generate a contextual response
+                        const responses = [
+                            `Asante kwa ujumbe wako. Ninaichambua na nitakujibu ipasavyo.`,
+                            `Nimeelewa swali lako. Nitakupa msaada utakaohitaji kuhusu Kiswahili.`,
+                            `Vizuri sana! Nimepata ujumbe wako. Natafakari jibu la kisarahisi.`,
+                            `Poa! Nimekuelewa. Natafuta maelezo sahihi kwa Kiswahili.`,
+                            `Sawa kabisa! Nimepokewa na ujumbe wako. Natafakari jibu lako.`,
+                            `Nashukuru kwa swali lako. Natafuta maelezo mwafaka kwa lugha ya Kiswahili.`
+                        ];
+                        resolve(responses[Math.floor(Math.random() * responses.length)]);
+                    }
+                }, 1500);
+            });
+        }
+
+        // Load saved theme
+        if (localStorage.getItem("theme") === "dark") {
+            document.body.classList.add("dark-mode");
+            themeToggle.checked = true;
+        }
+
+        // Load chat history from localStorage
+        function loadChatHistory() {
+            if (chatHistory.length > 0) {
+                // Clear welcome message
+                chatMessages.innerHTML = '';
+                
+                // Add all messages from history
+                chatHistory.forEach(item => {
+                    addMessageToChat(item.message, "user", item.timestamp, false);
+                    addMessageToChat(item.response, "bot", item.timestamp, false);
+                });
+            }
+            
+            // Update history list in sidebar
+            updateHistoryList();
+        }
+
+        // Update history list in sidebar
+        function updateHistoryList() {
+            historyList.innerHTML = '';
+            
+            if (chatHistory.length === 0) {
+                historyList.innerHTML = '<div class="history-item">Hakuna historia ya mazungumzo</div>';
+                return;
+            }
+            
+            // Group conversations by date
+            const conversationsByDate = {};
+            chatHistory.forEach(item => {
+                const date = new Date(item.timestamp).toLocaleDateString('sw-KE', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                if (!conversationsByDate[date]) {
+                    conversationsByDate[date] = [];
+                }
+                
+                conversationsByDate[date].push(item);
+            });
+            
+            // Add conversations to history list
+            Object.keys(conversationsByDate).forEach(date => {
+                const conversation = conversationsByDate[date][0]; // Get first message of the day
+                const time = new Date(conversation.timestamp).toLocaleTimeString('sw-KE', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+                const historyItem = document.createElement('div');
+                historyItem.classList.add('history-item');
+                historyItem.innerHTML = `
+                    <div class="history-text">Mazungumzo ya ${date}</div>
+                    <div class="history-time">${time}</div>
+                `;
+                
+                historyItem.addEventListener('click', () => {
+                    // When a history item is clicked, load that conversation
+                    chatMessages.innerHTML = '';
+                    conversationsByDate[date].forEach(item => {
+                        addMessageToChat(item.message, "user", item.timestamp, false);
+                        addMessageToChat(item.response, "bot", item.timestamp, false);
+                    });
+                    
+                    sidebar.classList.remove("active");
+                    overlay.classList.remove("active");
+                });
+                
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        // Theme toggle functionality
+        themeToggle.addEventListener("change", () => {
+            if (themeToggle.checked) {
+                document.body.classList.add("dark-mode");
+                localStorage.setItem("theme", "dark");
+            } else {
+                document.body.classList.remove("dark-mode");
+                localStorage.setItem("theme", "light");
+            }
+        });
+
+        // Auto-resize textarea
+        messageInput.addEventListener("input", () => {
+            messageInput.style.height = "auto";
+            messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + "px";
+        });
+
+        // Send message function
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (message === "") return;
+            
+            // Add user message to chat
+            const timestamp = new Date().getTime();
+            addMessageToChat(message, "user", timestamp, true);
+            
+            // Clear input
+            messageInput.value = "";
+            messageInput.style.height = "auto";
+            
+            // Show typing indicator
+            typingIndicator.style.display = "block";
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            try {
+                // Get AI response from our simulated backend
+                const response = await callSwahiliAI(message);
+                
+                // Hide typing indicator
+                typingIndicator.style.display = "none";
+                
+                // Add bot response to chat
+                addMessageToChat(response, "bot", timestamp, true);
+                
+            } catch (error) {
+                console.error("Error getting response:", error);
+                
+                // Hide typing indicator
+                typingIndicator.style.display = "none";
+                
+                // Add error message
+                addMessageToChat("Samahani, kuna hitilafu ya kiufundi. Tafadhali jaribu tena baada ya muda mfupi.", "bot", timestamp, true);
+            }
+        }
+
+        // Add message to chat
+        function addMessageToChat(text, sender, timestamp, saveToHistory) {
+            const messageElement = document.createElement("div");
+            messageElement.classList.add("message");
+            messageElement.classList.add(sender + "-message");
+            
+            const time = new Date(timestamp).toLocaleTimeString('sw-KE', { hour: '2-digit', minute: '2-digit' });
+            
+            messageElement.innerHTML = `
+                <div class="message-text">${text}</div>
+                <div class="message-time">${time}</div>
+            `;
+            
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Save to chat history if needed
+            if (saveToHistory) {
+                if (sender === "user") {
+                    // Add user message to history
+                    chatHistory.push({
+                        timestamp: timestamp,
+                        message: text,
+                        response: "" // Will be updated when bot responds
+                    });
+                } else {
+                    // Update the last message with bot response
+                    if (chatHistory.length > 0) {
+                        chatHistory[chatHistory.length - 1].response = text;
+                    }
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('mswahili_chat_history', JSON.stringify(chatHistory));
+                
+                // Update history list
+                updateHistoryList();
+            }
+        }
+
+        // Event listeners
+        sendBtn.addEventListener("click", sendMessage);
+        
+        messageInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Toggle sidebar
+        hamburger.addEventListener("click", () => {
+            sidebar.classList.add("active");
+            overlay.classList.add("active");
+        });
+
+        closeSidebar.addEventListener("click", () => {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+        });
+
+        overlay.addEventListener("click", () => {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+        });
+
+        // Clear history
+        clearHistory.addEventListener("click", () => {
+            if (confirm("Je, una hakika unataka kufuta historia yote ya mazungumzo?")) {
+                // Clear chat history
+                chatHistory = [];
+                localStorage.removeItem('mswahili_chat_history');
+                
+                // Clear chat UI
+                chatMessages.innerHTML = '<div class="welcome-message"><p>Karibu! Ninaweza kukusaidia na maswali yoyote kwa Kiswahili.</p></div>';
+                
+                // Update history list
+                updateHistoryList();
+            }
+        });
+
+        // Plus button functionality
+        plusBtn.addEventListener("click", () => {
+            const options = [
+                "Nisaidie kuhusu sarufi",
+                "Nina swali kuhusu visawe",
+                "Naomba maelezo ya neno",
+                "Nipe mfano wa matumizi ya neno",
+                "Tafadhali nisaidie kuhusu fasihi"
+            ];
+            
+            const randomOption = options[Math.floor(Math.random() * options.length)];
+            messageInput.value = randomOption;
+            messageInput.focus();
+            messageInput.style.height = "auto";
+            messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + "px";
+        });
+
+        // Initial focus on input and load history
+        messageInput.focus();
+        loadChatHistory();
+    </script>
 </body>
 </html>
